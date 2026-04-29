@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heath & Keane — AI Procurement, End-to-End</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf7;
+    --bg-elevated: #ffffff;
+    --ink: #0a0a0a;
+    --ink-soft: #1a1a1a;
+    --muted: #6b6b6b;
+    --muted-2: #9a9a9a;
+    --line: #e8e6e0;
+    --line-soft: #f0eee8;
+    --accent-2: #d97757;
+    --serif: 'Fraunces', 'Times New Roman', serif;
+    --sans: 'Inter Tight', -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 1;
+    opacity: 0.4;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Nav */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 20px 48px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(250, 250, 247, 0.72);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  nav.scrolled { border-bottom-color: var(--line); }
+  .logo {
+    font-family: var(--serif);
+    font-size: 22px; font-weight: 400;
+    letter-spacing: -0.02em; font-style: italic;
+  }
+  .logo span { font-style: normal; font-weight: 500; }
+  .nav-links {
+    display: flex; gap: 32px; list-style: none; font-size: 14px;
+  }
+  .nav-links a {
+    color: var(--ink-soft); text-decoration: none;
+    opacity: 0.75; transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+  .nav-cta {
+    padding: 9px 18px; background: var(--ink); color: var(--bg);
+    border-radius: 100px; font-size: 13px; font-weight: 500;
+    text-decoration: none; transition: transform 0.2s, background 0.2s;
+  }
+  .nav-cta:hover { transform: translateY(-1px); background: var(--accent-2); }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh; padding: 160px 48px 80px;
+    display: flex; flex-direction: column; justify-content: center;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 32px;
+    padding: 7px 14px; border: 1px solid var(--line);
+    border-radius: 100px; background: rgba(255,255,255,0.6);
+    width: fit-content; animation: fadeUp 0.8s ease 0.1s both;
+  }
+  .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-2); animation: pulse 2s ease infinite;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(48px, 8.5vw, 128px);
+    font-weight: 300; line-height: 0.95;
+    letter-spacing: -0.04em; margin-bottom: 36px;
+    max-width: 1200px; animation: fadeUp 0.9s ease 0.25s both;
+  }
+  .hero h1 em { font-style: italic; font-weight: 300; color: var(--muted); }
+  .hero h1 .accent {
+    font-style: italic; font-weight: 400;
+    background: linear-gradient(135deg, var(--ink) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-meta {
+    display: grid; grid-template-columns: 1.4fr 1fr;
+    gap: 80px; align-items: end;
+    max-width: 1100px; animation: fadeUp 0.9s ease 0.4s both;
+  }
+  .hero-sub { font-size: 19px; line-height: 1.55; color: var(--muted); max-width: 540px; }
+  .hero-sub strong { color: var(--ink); font-weight: 500; }
+  .hero-actions { display: flex; gap: 14px; align-items: center; }
+  .btn-primary {
+    padding: 14px 26px; background: var(--ink); color: var(--bg);
+    border-radius: 100px; font-size: 14px; font-weight: 500;
+    text-decoration: none; transition: transform 0.2s, background 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary:hover { transform: translateY(-2px); background: var(--accent-2); }
+  .btn-secondary {
+    padding: 14px 22px; color: var(--ink); text-decoration: none;
+    font-size: 14px; font-weight: 500;
+    border-bottom: 1px solid var(--ink); transition: opacity 0.2s;
+  }
+  .btn-secondary:hover { opacity: 0.6; }
+  .hero-arrow { transition: transform 0.3s; display: inline-block; }
+  .btn-primary:hover .hero-arrow { transform: translateX(3px); }
+
+  /* Trust */
+  .trust {
+    padding: 60px 48px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-elevated);
+  }
+  .trust-inner {
+    max-width: 1400px; margin: 0 auto;
+    display: flex; align-items: center; gap: 60px; flex-wrap: wrap;
+  }
+  .trust-label {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted-2); flex-shrink: 0;
+  }
+  .trust-logos {
+    display: flex; gap: 56px; flex-wrap: wrap;
+    align-items: center; opacity: 0.55;
+  }
+  .trust-logos span {
+    font-family: var(--serif); font-size: 22px; font-weight: 400;
+    letter-spacing: -0.02em; color: var(--ink);
+  }
+  .trust-logos span:nth-child(2) { font-family: var(--sans); font-weight: 600; font-size: 18px; letter-spacing: -0.03em; }
+  .trust-logos span:nth-child(3) { font-family: var(--mono); font-size: 16px; font-weight: 500; }
+  .trust-logos span:nth-child(4) { font-style: italic; }
+  .trust-logos span:nth-child(5) { font-family: var(--sans); font-weight: 700; font-size: 17px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* Section common */
+  .section-label {
+    display: flex; align-items: baseline; gap: 16px; margin-bottom: 32px;
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  }
+  .section-label::before {
+    content: ''; width: 24px; height: 1px;
+    background: var(--ink); display: inline-block;
+  }
+  .section-h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 6vw, 76px);
+    font-weight: 300; line-height: 1.02;
+    letter-spacing: -0.03em; margin-bottom: 28px; max-width: 1000px;
+  }
+  .section-h2 em { font-style: italic; color: var(--muted); }
+  .section-intro {
+    font-size: 18px; color: var(--muted);
+    max-width: 640px; margin-bottom: 80px; line-height: 1.55;
+  }
+
+  /* Product */
+  .product { padding: 140px 48px 60px; max-width: 1400px; margin: 0 auto; }
+
+  /* Mockup */
+  .mockup-frame {
+    background: linear-gradient(135deg, #f5f3ed 0%, #ede9df 100%);
+    border-radius: 24px; padding: 28px;
+    border: 1px solid var(--line);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.8) inset,
+      0 60px 100px -40px rgba(20, 20, 20, 0.18),
+      0 30px 60px -30px rgba(20, 20, 20, 0.12);
+    margin-bottom: 100px; position: relative; overflow: hidden;
+  }
+  .mockup-frame::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at top right, rgba(217, 119, 87, 0.08), transparent 60%);
+    pointer-events: none;
+  }
+  .mockup {
+    background: #ffffff; border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--line); position: relative;
+  }
+  .mockup-bar {
+    height: 38px; background: #fafaf7;
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; padding: 0 16px; gap: 8px;
+  }
+  .mockup-bar .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .mockup-bar .dot:nth-child(1) { background: #ff5f57; }
+  .mockup-bar .dot:nth-child(2) { background: #febc2e; }
+  .mockup-bar .dot:nth-child(3) { background: #28c840; }
+  .mockup-url {
+    flex: 1; text-align: center;
+    font-family: var(--mono); font-size: 11px; color: var(--muted-2);
+  }
+  .app { display: grid; grid-template-columns: 220px 1fr; min-height: 540px; }
+  .sidebar {
+    background: #fafaf7; border-right: 1px solid var(--line); padding: 22px 16px;
+  }
+  .sidebar-logo {
+    font-family: var(--serif); font-size: 16px; font-weight: 500;
+    margin-bottom: 28px; padding: 0 8px; letter-spacing: -0.02em;
+  }
+  .sidebar-logo span { font-style: italic; font-weight: 400; }
+  .nav-section {
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted-2); padding: 0 8px; margin: 18px 0 8px;
+  }
+  .nav-item {
+    padding: 8px 10px; border-radius: 6px; font-size: 13px;
+    color: var(--ink-soft); margin-bottom: 2px;
+    display: flex; align-items: center; gap: 9px;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .nav-item:hover { background: rgba(0,0,0,0.04); }
+  .nav-item.active { background: var(--ink); color: white; }
+  .nav-item svg { width: 14px; height: 14px; opacity: 0.7; }
+  .nav-item.active svg { opacity: 1; }
+  .app-main { padding: 24px 28px; overflow: hidden; }
+  .app-header {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 24px;
+  }
+  .app-title {
+    font-family: var(--serif); font-size: 22px;
+    font-weight: 400; letter-spacing: -0.02em;
+  }
+  .app-title em { color: var(--muted); }
+  .ai-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #d97757 100%);
+    color: white; padding: 5px 11px; border-radius: 100px;
+    font-size: 11px; font-weight: 500;
+    font-family: var(--mono); letter-spacing: 0.04em;
+  }
+  .ai-pill .pulse {
+    width: 6px; height: 6px;
+    background: white; border-radius: 50%;
+    animation: pulse 1.6s infinite;
+  }
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; margin-bottom: 22px;
+  }
+  .stat {
+    background: #fafaf7; border: 1px solid var(--line);
+    border-radius: 8px; padding: 12px 14px;
+  }
+  .stat-label {
+    font-size: 10px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-family: var(--mono); margin-bottom: 6px;
+  }
+  .stat-value {
+    font-family: var(--serif); font-size: 22px;
+    font-weight: 400; letter-spacing: -0.02em;
+  }
+  .stat-value .small { font-size: 13px; color: var(--muted); margin-left: 2px; }
+  .stat-delta {
+    font-size: 10px; color: #16a34a;
+    margin-top: 3px; font-weight: 500;
+  }
+  .stat-delta.down { color: var(--accent-2); }
+  .ai-chat {
+    background: linear-gradient(135deg, #fafaf7 0%, #f0ede5 100%);
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px; margin-bottom: 16px;
+  }
+  .ai-msg-label {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .ai-msg-label::before {
+    content: ''; width: 14px; height: 14px;
+    background: linear-gradient(135deg, #1a1a1a, #d97757);
+    border-radius: 50%; display: inline-block;
+  }
+  .ai-text { font-size: 13px; line-height: 1.55; color: var(--ink-soft); }
+  .ai-text b { font-weight: 600; color: var(--ink); }
+  .table {
+    border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+  }
+  .table-row {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 70px;
+    padding: 11px 14px; border-bottom: 1px solid var(--line);
+    font-size: 12px; align-items: center;
+  }
+  .table-row:last-child { border-bottom: none; }
+  .table-row.head {
+    background: #fafaf7; font-family: var(--mono); font-size: 10px;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .vendor { font-weight: 500; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 100px;
+    font-size: 10px; font-weight: 500;
+    background: #ecfdf5; color: #047857;
+  }
+  .badge.warn { background: #fef3c7; color: #92400e; }
+
+  /* Modules grid */
+  .modules { padding: 60px 48px 140px; max-width: 1400px; margin: 0 auto; }
+  .modules-head {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: end; margin-bottom: 60px;
+  }
+  .modules-head h3 {
+    font-family: var(--serif);
+    font-size: clamp(32px, 4.5vw, 56px);
+    font-weight: 300; line-height: 1.05; letter-spacing: -0.03em;
+  }
+  .modules-head h3 em { font-style: italic; color: var(--muted); }
+  .modules-head p {
+    font-size: 16px; color: var(--muted);
+    line-height: 1.6; max-width: 480px;
+  }
+  .modules-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--line);
+    border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
+  }
+  .module {
+    padding: 36px 32px; background: var(--bg-elevated);
+    transition: background 0.3s; min-height: 280px;
+    display: flex; flex-direction: column;
+  }
+  .module:hover { background: #faf8f3; }
+  .module-num {
+    font-family: var(--mono); font-size: 10px;
+    color: var(--muted-2); letter-spacing: 0.1em; margin-bottom: 24px;
+  }
+  .module-icon {
+    width: 32px; height: 32px; margin-bottom: 22px;
+    color: var(--ink); stroke-width: 1.4;
+  }
+  .module h4 {
+    font-family: var(--serif); font-size: 22px;
+    font-weight: 400; letter-spacing: -0.02em;
+    line-height: 1.15; margin-bottom: 12px;
+  }
+  .module h4 em { color: var(--muted); font-style: italic; }
+  .module p {
+    font-size: 14px; color: var(--muted);
+    line-height: 1.6; margin-bottom: auto;
+  }
+  .module-tag {
+    margin-top: 22px;
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent-2);
+    padding-top: 16px; border-top: 1px dashed var(--line);
+  }
+
+  /* End-to-end ribbon */
+  .ribbon {
+    padding: 140px 48px;
+    background: var(--bg-elevated);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .ribbon-inner { max-width: 1400px; margin: 0 auto; }
+  .ribbon h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 6vw, 76px);
+    font-weight: 300; line-height: 1.02;
+    letter-spacing: -0.03em; margin-bottom: 28px; max-width: 900px;
+  }
+  .ribbon h2 em { font-style: italic; color: var(--muted); }
+  .ribbon .section-intro { margin-bottom: 60px; max-width: 700px; }
+  .pipeline {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .stage { padding: 40px 28px; border-right: 1px solid var(--line); }
+  .stage:last-child { border-right: none; }
+  .stage-num {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--muted-2); letter-spacing: 0.14em; margin-bottom: 14px;
+  }
+  .stage h4 {
+    font-family: var(--serif); font-size: 24px;
+    font-weight: 400; letter-spacing: -0.02em;
+    line-height: 1.1; margin-bottom: 12px;
+  }
+  .stage p {
+    font-size: 13px; color: var(--muted);
+    line-height: 1.55; margin-bottom: 16px;
+  }
+  .stage-meta {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.08em; color: var(--accent-2);
+    text-transform: uppercase;
+  }
+  .arrow-flow {
+    margin-top: 40px;
+    display: flex; align-items: center; gap: 14px;
+    color: var(--muted); font-size: 13px;
+    font-style: italic; font-family: var(--serif);
+  }
+  .arrow-flow::before, .arrow-flow::after {
+    content: ''; flex: 1; height: 1px; background: var(--line);
+  }
+
+  /* Industries */
+  .industries { padding: 140px 48px; max-width: 1400px; margin: 0 auto; }
+  .industries-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; margin-top: 20px;
+  }
+  .industry-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--line); border-radius: 14px;
+    padding: 32px 28px;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .industry-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(217, 119, 87, 0.3);
+    box-shadow: 0 20px 40px -20px rgba(20, 20, 20, 0.12);
+  }
+  .industry-card::after {
+    content: ''; position: absolute; top: 0; right: 0;
+    width: 80px; height: 80px;
+    background: radial-gradient(circle at top right, rgba(217, 119, 87, 0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .industry-num {
+    font-family: var(--mono); font-size: 10px;
+    color: var(--muted-2); letter-spacing: 0.12em; margin-bottom: 20px;
+  }
+  .industry-glyph {
+    font-family: var(--serif); font-size: 38px;
+    font-weight: 300; font-style: italic;
+    color: var(--accent-2); line-height: 1;
+    margin-bottom: 18px; display: block;
+  }
+  .industry-card h4 {
+    font-family: var(--serif); font-size: 22px;
+    font-weight: 400; letter-spacing: -0.02em; margin-bottom: 10px;
+  }
+  .industry-card p {
+    font-size: 13px; color: var(--muted);
+    line-height: 1.55; margin-bottom: 18px;
+  }
+  .industry-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .industry-tag {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.06em; color: var(--ink-soft);
+    background: #f5f3ed; border: 1px solid var(--line);
+    padding: 3px 8px; border-radius: 100px;
+  }
+
+  /* Geography */
+  .geography {
+    padding: 140px 48px;
+    background: #0a0a0a; color: #fafaf7;
+    position: relative; overflow: hidden;
+  }
+  .geography::before {
+    content: ''; position: absolute;
+    top: -30%; left: -10%; width: 60%; height: 100%;
+    background: radial-gradient(circle, rgba(217,119,87,0.12), transparent 60%);
+    pointer-events: none;
+  }
+  .geography-inner { max-width: 1400px; margin: 0 auto; position: relative; }
+  .geography .section-label { color: rgba(250,250,247,0.5); }
+  .geography .section-label::before { background: rgba(250,250,247,0.5); }
+  .geography h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 6vw, 76px);
+    font-weight: 300; line-height: 1.02;
+    letter-spacing: -0.03em; margin-bottom: 28px; max-width: 900px;
+  }
+  .geography h2 em { font-style: italic; color: rgba(250,250,247,0.45); }
+  .geography .section-intro {
+    color: rgba(250,250,247,0.6);
+    max-width: 600px; margin-bottom: 80px;
+  }
+  .regions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+  .region {
+    padding: 32px 28px 32px 0;
+    border-top: 1px solid rgba(250,250,247,0.15);
+  }
+  .region-flag {
+    font-family: var(--serif); font-size: 12px;
+    color: var(--accent-2); letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 18px; font-style: italic;
+  }
+  .region h4 {
+    font-family: var(--serif); font-size: 32px;
+    font-weight: 300; letter-spacing: -0.02em;
+    margin-bottom: 14px; line-height: 1;
+  }
+  .region p {
+    font-size: 13px; color: rgba(250,250,247,0.6);
+    line-height: 1.55; margin-bottom: 18px;
+  }
+  .region-meta {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(250,250,247,0.45);
+  }
+
+  /* Process */
+  .process {
+    padding: 140px 48px;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--line);
+  }
+  .process-inner { max-width: 1400px; margin: 0 auto; }
+  .process h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 6vw, 76px);
+    font-weight: 300; line-height: 1.02;
+    letter-spacing: -0.03em; margin-bottom: 80px; max-width: 900px;
+  }
+  .process h2 em { font-style: italic; color: var(--muted); }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+  .step {
+    padding: 32px 28px 32px 0;
+    border-top: 1px solid var(--line);
+  }
+  .step-num {
+    font-family: var(--serif); font-size: 64px;
+    font-weight: 300; font-style: italic;
+    color: var(--accent-2); line-height: 1; margin-bottom: 24px;
+  }
+  .step h4 {
+    font-family: var(--serif); font-size: 22px;
+    font-weight: 400; letter-spacing: -0.02em; margin-bottom: 12px;
+  }
+  .step p { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+  /* Quote */
+  .quote {
+    padding: 140px 48px; max-width: 1100px;
+    margin: 0 auto; text-align: center;
+  }
+  .quote blockquote {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 300; line-height: 1.2;
+    letter-spacing: -0.02em; margin-bottom: 32px;
+  }
+  .quote blockquote em { color: var(--muted); }
+  .quote cite {
+    font-style: normal; font-size: 13px; color: var(--muted);
+    font-family: var(--mono); letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .quote cite strong { color: var(--ink); font-weight: 500; }
+
+  /* CTA */
+  .cta { padding: 80px 48px 140px; max-width: 1400px; margin: 0 auto; }
+  .cta-card {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border-radius: 28px; padding: 100px 80px;
+    color: #fafaf7; position: relative; overflow: hidden;
+  }
+  .cta-card::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 20% 80%, rgba(217,119,87,0.18), transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(217,119,87,0.1), transparent 50%);
+    pointer-events: none;
+  }
+  .cta-card h2 {
+    font-family: var(--serif);
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 300; line-height: 1.05;
+    letter-spacing: -0.03em; margin-bottom: 24px;
+    max-width: 700px; position: relative;
+  }
+  .cta-card h2 em { font-style: italic; color: rgba(250,250,247,0.5); }
+  .cta-card p {
+    font-size: 17px; color: rgba(250,250,247,0.65);
+    margin-bottom: 40px; max-width: 520px; position: relative;
+  }
+  .cta-actions { display: flex; gap: 14px; flex-wrap: wrap; position: relative; }
+  .btn-cta {
+    padding: 16px 30px;
+    background: #fafaf7; color: #0a0a0a;
+    border-radius: 100px; font-size: 14px; font-weight: 500;
+    text-decoration: none; transition: transform 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-cta:hover { transform: translateY(-2px); }
+  .btn-cta-ghost {
+    padding: 16px 28px; color: #fafaf7;
+    border: 1px solid rgba(250,250,247,0.25);
+    border-radius: 100px; font-size: 14px; font-weight: 500;
+    text-decoration: none; transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-cta-ghost:hover { border-color: #fafaf7; background: rgba(250,250,247,0.05); }
+
+  /* Footer */
+  footer {
+    padding: 80px 48px 40px;
+    border-top: 1px solid var(--line);
+    background: var(--bg-elevated);
+  }
+  .footer-inner {
+    max-width: 1400px; margin: 0 auto;
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px; margin-bottom: 60px;
+  }
+  .footer-brand .logo { font-size: 28px; margin-bottom: 16px; display: inline-block; }
+  .footer-brand p {
+    font-size: 14px; color: var(--muted);
+    max-width: 320px; line-height: 1.6;
+  }
+  .footer-col h5 {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted-2); margin-bottom: 18px; font-weight: 500;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 10px; }
+  .footer-col a {
+    font-size: 14px; color: var(--ink-soft);
+    text-decoration: none; opacity: 0.8; transition: opacity 0.2s;
+  }
+  .footer-col a:hover { opacity: 1; color: var(--accent-2); }
+  .footer-bottom {
+    max-width: 1400px; margin: 0 auto;
+    padding-top: 32px; border-top: 1px solid var(--line-soft);
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--muted-2);
+    font-family: var(--mono); letter-spacing: 0.04em;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 130px 24px 60px; }
+    .hero-meta { grid-template-columns: 1fr; gap: 32px; }
+    .trust-inner { gap: 32px; }
+    .trust-logos { gap: 32px; }
+    .product, .modules, .industries, .quote, .cta { padding-left: 24px; padding-right: 24px; }
+    .ribbon, .geography, .process { padding-left: 24px; padding-right: 24px; }
+    .modules-grid { grid-template-columns: 1fr; }
+    .modules-head { grid-template-columns: 1fr; gap: 24px; }
+    .pipeline { grid-template-columns: 1fr 1fr; }
+    .stage { border-right: none; border-bottom: 1px solid var(--line); }
+    .stage:nth-child(odd) { border-right: 1px solid var(--line); }
+    .industries-grid { grid-template-columns: 1fr; }
+    .regions { grid-template-columns: 1fr 1fr; }
+    .steps { grid-template-columns: repeat(2, 1fr); }
+    .cta-card { padding: 60px 32px; border-radius: 20px; }
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .app { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .table-row { grid-template-columns: 2fr 1fr 70px; font-size: 11px; }
+    .table-row > div:nth-child(2),
+    .table-row > div:nth-child(3) { display: none; }
+    .footer-bottom { flex-direction: column; gap: 12px; }
+    .mockup-frame { padding: 14px; }
+    .ribbon, .industries, .process, .geography { padding-top: 80px; padding-bottom: 80px; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="logo">Heath <span>&</span> <em>Keane</em></div>
+  <ul class="nav-links">
+    <li><a href="#product">Product</a></li>
+    <li><a href="#end-to-end">End-to-end</a></li>
+    <li><a href="#industries">Industries</a></li>
+    <li><a href="#geography">Reach</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Request access</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="eyebrow"><span class="dot"></span> Now with AI Procurement Manager</div>
+  <h1>
+    Procurement, <em>quietly</em><br>
+    rewritten by <span class="accent">intelligence</span>.
+  </h1>
+  <div class="hero-meta">
+    <p class="hero-sub">
+      Heath & Keane is the end-to-end procurement platform for modern businesses. <strong>Our AI Procurement Manager</strong> finds suppliers, negotiates, runs quality checks, and ships through our warehouses — so your team can focus on selling.
+    </p>
+    <div class="hero-actions">
+      <a href="#cta" class="btn-primary">Request access <span class="hero-arrow">→</span></a>
+      <a href="#product" class="btn-secondary">See it work</a>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="trust">
+  <div class="trust-inner">
+    <div class="trust-label">Built for teams in</div>
+    <div class="trust-logos">
+      <span>Apparel</span>
+      <span>Manufacturing</span>
+      <span>F&amp;B</span>
+      <span>Packaging</span>
+      <span>RETAIL</span>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section class="product reveal" id="product">
+  <div class="section-label">The product</div>
+  <h2 class="section-h2">An <em>operator</em>, not a dashboard.</h2>
+  <p class="section-intro">
+    Most procurement tools give you charts. Ours gives you an agent — one that reads contracts, benchmarks pricing across your category, drafts RFQs, and follows up with vendors in your voice. You stay in control. It does the work.
+  </p>
+
+  <div class="mockup-frame">
+    <div class="mockup">
+      <div class="mockup-bar">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="mockup-url">app.heathandkeane.com / procurement</div>
+      </div>
+      <div class="app">
+        <aside class="sidebar">
+          <div class="sidebar-logo">H<span>&amp;</span>K</div>
+          <div class="nav-section">Workspace</div>
+          <div class="nav-item active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/></svg>
+            AI Manager
+          </div>
+          <div class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+            Find Suppliers
+          </div>
+          <div class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M9 9h6v6H9z"/></svg>
+            Dashboard
+          </div>
+          <div class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            Live Tracking
+          </div>
+          <div class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 9l-5 5-3-3-4 4"/></svg>
+            Analytics
+          </div>
+          <div class="nav-section">Operations</div>
+          <div class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            Payments
+          </div>
+          <div class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            QA Reports
+          </div>
+          <div class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            Inventory
+          </div>
+        </aside>
+        <main class="app-main">
+          <div class="app-header">
+            <div class="app-title">Procurement <em>overview</em></div>
+            <div class="ai-pill"><span class="pulse"></span> AI MANAGER · ACTIVE</div>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-label">Active RFQs</div>
+              <div class="stat-value">14</div>
+              <div class="stat-delta">+3 this week</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Saved YTD</div>
+              <div class="stat-value">₹42<span class="small">.6L</span></div>
+              <div class="stat-delta">+18% vs Q3</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Cycle time</div>
+              <div class="stat-value">3.2<span class="small">d</span></div>
+              <div class="stat-delta down">−61% with AI</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Vendors</div>
+              <div class="stat-value">87</div>
+              <div class="stat-delta">12 new sourced</div>
+            </div>
+          </div>
+          <div class="ai-chat">
+            <div class="ai-msg-label">AI Manager · just now</div>
+            <div class="ai-text">
+              I've shortlisted <b>3 vendors</b> for the cotton t-shirt RFQ. Best quote from <b>Mumbai Knits Co.</b> is <b>14.2% below</b> your benchmark — but their delivery SLA is 5d vs 2d from incumbent. Want me to negotiate a faster SLA, or proceed?
+            </div>
+          </div>
+          <div class="table">
+            <div class="table-row head">
+              <div>Vendor</div><div>Category</div><div>Quote</div><div>Status</div><div></div>
+            </div>
+            <div class="table-row">
+              <div class="vendor">Mumbai Knits Co.</div>
+              <div>Apparel</div>
+              <div>₹2.41L</div>
+              <div><span class="badge">Negotiating</span></div>
+              <div style="text-align:right;color:var(--muted);font-size:11px">View →</div>
+            </div>
+            <div class="table-row">
+              <div class="vendor">Meridian Logistics</div>
+              <div>Shipping</div>
+              <div>₹8.92L</div>
+              <div><span class="badge warn">Awaiting</span></div>
+              <div style="text-align:right;color:var(--muted);font-size:11px">View →</div>
+            </div>
+            <div class="table-row">
+              <div class="vendor">Istanbul Denim Mills</div>
+              <div>Apparel</div>
+              <div>₹6.18L</div>
+              <div><span class="badge">Approved</span></div>
+              <div style="text-align:right;color:var(--muted);font-size:11px">View →</div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 MODULES -->
+<section class="modules reveal">
+  <div class="modules-head">
+    <h3>Nine modules. <em>One agent.</em><br>The full procurement stack.</h3>
+    <p>
+      Every step from discovery to delivery, unified under a single intelligence. Below: each module the AI Manager has access to — and what happens inside it.
+    </p>
+  </div>
+
+  <div class="modules-grid">
+    <div class="module">
+      <div class="module-num">M01</div>
+      <svg class="module-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+      <h4>Find Suppliers <em>— intelligently</em></h4>
+      <p>Type a need in plain English. The AI scrapes the web, ranks suppliers by price, MOQ, lead time, and reliability. Real-time benchmarks against your category.</p>
+      <div class="module-tag">AI · Live web data</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">M02</div>
+      <svg class="module-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3h18v18H3z"/><path d="M9 9h6v6H9z"/></svg>
+      <h4>Dashboard <em>— in plain English</em></h4>
+      <p>"Spend up 12% — driven by Istanbul Denim. Consider renegotiating." Natural-language summaries replace the chart-and-pivot ritual.</p>
+      <div class="module-tag">AI · Daily digest</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">M03</div>
+      <svg class="module-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <h4>Live Tracking <em>— with foresight</em></h4>
+      <p>Anomaly detection that flags a delayed shipment 4 days before it actually misses. Carrier APIs unified. Proactive alerts. No spreadsheets.</p>
+      <div class="module-tag">AI · ShipStation, AfterShip</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">M04</div>
+      <svg class="module-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="M18 9l-5 5-3-3-4 4"/></svg>
+      <h4>Analytics <em>— that suggest moves</em></h4>
+      <p>Charts you read. Insights you act on. Identifies cost-saving opportunities, vendor concentration risk, and contracts up for renewal. Beautifully.</p>
+      <div class="module-tag">AI · Cost optimisation</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">M05</div>
+      <svg class="module-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      <h4>Payments <em>— and risk flags</em></h4>
+      <p>Catches duplicate invoices, scope creep, and payment risk before money moves. Multi-currency, cross-border, with the lowest FX margins in the market.</p>
+      <div class="module-tag">Razorpay · Wise · ICICI</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">M06</div>
+      <svg class="module-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <h4>QA Reports <em>— with evidence</em></h4>
+      <p>Photographic batch QA, defect rates per vendor, traceable pass/fail logs. Auto-flags vendors trending down. Audit-ready in seconds.</p>
+      <div class="module-tag">AI · Vision + scoring</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">M07</div>
+      <svg class="module-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      <h4>Inventory <em>— synced live</em></h4>
+      <p>Across our warehouses and yours. Reorder thresholds. SKU-level visibility. Auto-triggered RFQs when stock dips below safety levels.</p>
+      <div class="module-tag">Live · Multi-location</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">M08</div>
+      <svg class="module-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+      <h4>Documents <em>— parsed, filed</em></h4>
+      <p>Invoices, contracts, GST/TDS, bank statements — extracted, categorised, and posted to your books automatically. Powered by DocFlow.</p>
+      <div class="module-tag">DocFlow · n8n native</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">M09</div>
+      <svg class="module-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8M8 14h5"/></svg>
+      <h4>Negotiation <em>— in your voice</em></h4>
+      <p>Drafts emails, counters quotes, holds firm on red lines. Every move logged, every email reviewable. Approve what matters; it handles the rest.</p>
+      <div class="module-tag">AI · Email + WhatsApp</div>
+    </div>
+  </div>
+</section>
+
+<!-- END-TO-END -->
+<section class="ribbon reveal" id="end-to-end">
+  <div class="ribbon-inner">
+    <div class="section-label">More than software</div>
+    <h2>We don't just <em>find</em> your suppliers.<br>We <em>run</em> the supply chain.</h2>
+    <p class="section-intro">
+      Heath & Keane operates owned and partner warehouses across India and the UAE. The AI Manager finds the supplier — we receive the goods, run QA, store, ship, and even sell on your behalf if you need it. Software plus operations, in one stack.
+    </p>
+
+    <div class="pipeline">
+      <div class="stage">
+        <div class="stage-num">STAGE I</div>
+        <h4>Source</h4>
+        <p>AI sources qualified suppliers from India, China, Türkiye, and Vietnam. Quotes benchmarked. Shortlist in hours.</p>
+        <div class="stage-meta">AI Layer</div>
+      </div>
+      <div class="stage">
+        <div class="stage-num">STAGE II</div>
+        <h4>Ship &amp; QA</h4>
+        <p>Goods routed to our warehouses. Photographic QA, defect grading, batch-level evidence. Reject or release.</p>
+        <div class="stage-meta">Operations Layer</div>
+      </div>
+      <div class="stage">
+        <div class="stage-num">STAGE III</div>
+        <h4>Store &amp; sync</h4>
+        <p>Inventory live in our warehouses. Reorder thresholds set. Pick-and-pack staff on hand 24/7.</p>
+        <div class="stage-meta">Warehouse Layer</div>
+      </div>
+      <div class="stage">
+        <div class="stage-num">STAGE IV</div>
+        <h4>Sell &amp; settle</h4>
+        <p>Optional: we list and ship through our channels — Amazon, your D2C, retail. You see one P&amp;L.</p>
+        <div class="stage-meta">Sell-through Layer</div>
+      </div>
+    </div>
+
+    <div class="arrow-flow">— a single contract, four layers of capability —</div>
+  </div>
+</section>
+
+<!-- INDUSTRIES -->
+<section class="industries reveal" id="industries">
+  <div class="section-label">Industries we serve</div>
+  <h2 class="section-h2">Different categories.<br><em>Same compounding savings.</em></h2>
+  <p class="section-intro">
+    Procurement looks different in apparel than it does in F&amp;B. The AI Manager learns your category — its vendors, its margins, its quirks — and gets sharper with every order.
+  </p>
+
+  <div class="industries-grid">
+    <div class="industry-card">
+      <div class="industry-num">01 / Largest segment</div>
+      <span class="industry-glyph">a</span>
+      <h4>Apparel &amp; Textiles</h4>
+      <p>Cotton, denim, knits, technical fabrics. We map the chain from spinning mills to finished SKU. Mumbai, Tirupur, Istanbul, Guangzhou.</p>
+      <div class="industry-tags">
+        <span class="industry-tag">Cotton</span>
+        <span class="industry-tag">Denim</span>
+        <span class="industry-tag">Knits</span>
+        <span class="industry-tag">Fast fashion</span>
+      </div>
+    </div>
+
+    <div class="industry-card">
+      <div class="industry-num">02</div>
+      <span class="industry-glyph">m</span>
+      <h4>Manufacturing &amp; Industrial</h4>
+      <p>Components, raw materials, MRO. Multi-tier vendor management with documentation. Compliance-ready records, GST/TDS automated.</p>
+      <div class="industry-tags">
+        <span class="industry-tag">Components</span>
+        <span class="industry-tag">Raw mat.</span>
+        <span class="industry-tag">MRO</span>
+      </div>
+    </div>
+
+    <div class="industry-card">
+      <div class="industry-num">03</div>
+      <span class="industry-glyph">f</span>
+      <h4>Food &amp; Beverage</h4>
+      <p>Cold-chain aware. Shelf-life flagged. FSSAI &amp; HACCP documentation surfaced automatically. Supplier QA tied to lot codes.</p>
+      <div class="industry-tags">
+        <span class="industry-tag">Cold-chain</span>
+        <span class="industry-tag">FSSAI</span>
+        <span class="industry-tag">Lot tracking</span>
+      </div>
+    </div>
+
+    <div class="industry-card">
+      <div class="industry-num">04</div>
+      <span class="industry-glyph">p</span>
+      <h4>Packaging &amp; Print</h4>
+      <p>Custom boxes, labels, mailers. Spec libraries that remember every brand requirement. Reorders in two clicks.</p>
+      <div class="industry-tags">
+        <span class="industry-tag">Custom</span>
+        <span class="industry-tag">Sustainable</span>
+        <span class="industry-tag">Print-ready</span>
+      </div>
+    </div>
+
+    <div class="industry-card">
+      <div class="industry-num">05</div>
+      <span class="industry-glyph">e</span>
+      <h4>D2C &amp; E-commerce</h4>
+      <p>Built for fast-moving brands. Amazon-ready inventory sync, marketplace fee modelling, and unit economics by SKU.</p>
+      <div class="industry-tags">
+        <span class="industry-tag">Amazon-ready</span>
+        <span class="industry-tag">SKU-level</span>
+        <span class="industry-tag">Multi-channel</span>
+      </div>
+    </div>
+
+    <div class="industry-card">
+      <div class="industry-num">06</div>
+      <span class="industry-glyph">r</span>
+      <h4>Retail &amp; Wholesale</h4>
+      <p>Multi-location inventory, store-level reorder rules, and bulk negotiation calendars tied to seasonal cycles.</p>
+      <div class="industry-tags">
+        <span class="industry-tag">Multi-store</span>
+        <span class="industry-tag">Seasonal</span>
+        <span class="industry-tag">Bulk</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GEOGRAPHY -->
+<section class="geography reveal" id="geography">
+  <div class="geography-inner">
+    <div class="section-label">Where we operate</div>
+    <h2>Four markets. <em>One stack.</em></h2>
+    <p class="section-intro">
+      Built for businesses that source globally and sell across borders. Our supplier network spans Asia; our warehouses sit in India and the UAE; our customers live wherever ambition does.
+    </p>
+
+    <div class="regions">
+      <div class="region">
+        <div class="region-flag">— India</div>
+        <h4>Bengaluru</h4>
+        <p>HQ. Pilot warehouse, supplier network across Tirupur, Mumbai, Surat, Delhi NCR. Razorpay/ICICI banking integrated.</p>
+        <div class="region-meta">HQ · Live</div>
+      </div>
+      <div class="region">
+        <div class="region-flag">— UAE</div>
+        <h4>Dubai</h4>
+        <p>DIFC presence in build. Free-zone warehousing partnerships. GCC distribution and cross-border settlement.</p>
+        <div class="region-meta">2026 · In motion</div>
+      </div>
+      <div class="region">
+        <div class="region-flag">— USA</div>
+        <h4>NY &amp; LA</h4>
+        <p>3PL partnerships for D2C brands sourcing from Asia. Customs and FBA-ready inbound. USD invoicing.</p>
+        <div class="region-meta">2027 · Roadmap</div>
+      </div>
+      <div class="region">
+        <div class="region-flag">— Europe</div>
+        <h4>Rotterdam</h4>
+        <p>EU customs gateway. Compatible with EORI, REACH, CE marking. Multi-language vendor support.</p>
+        <div class="region-meta">2027 · Roadmap</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="process reveal" id="how">
+  <div class="process-inner">
+    <div class="section-label">How it works</div>
+    <h2>From requisition to <em>delivered</em>, in days.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">i</div>
+        <h4>Describe the need</h4>
+        <p>"I need 500 cotton t-shirts delivered to Dubai by March." That's the input. No forms.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">ii</div>
+        <h4>AI shortlists</h4>
+        <p>The Manager benchmarks pricing, sources qualified vendors, and drafts the RFQ. You review.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">iii</div>
+        <h4>Negotiate &amp; ship</h4>
+        <p>Quotes come back. The AI counters, follows up, books logistics. You stay in the loop.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">iv</div>
+        <h4>QA, store, sell</h4>
+        <p>Goods land in our warehouse. We QA, store, and ship to your buyer or back to you. Done.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote reveal">
+  <blockquote>
+    "We replaced <em>three spreadsheets, two Slack channels,</em> and the better part of a procurement hire. Heath &amp; Keane just runs in the background."
+  </blockquote>
+  <cite>— <strong>Pilot user</strong>, mid-market apparel brand</cite>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="cta">
+  <div class="cta-card">
+    <h2>Get on the early <em>access list.</em></h2>
+    <p>We're onboarding a small group of teams in India, the UAE, and the US. If procurement is eating your week, let's talk.</p>
+    <div class="cta-actions">
+      <a href="mailto:hello@heathandkeane.com" class="btn-cta">Request access →</a>
+      <a href="#" class="btn-cta-ghost">Read the brief</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo">Heath <span>&</span> <em>Keane</em></div>
+      <p>An AI procurement platform built for SMEs in India, the UAE, USA, and Europe. Pre-seed, ambitious, and quietly building.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Product</h5>
+      <ul>
+        <li><a href="#product">AI Manager</a></li>
+        <li><a href="#">Find Suppliers</a></li>
+        <li><a href="#">Live Tracking</a></li>
+        <li><a href="#">Documents</a></li>
+        <li><a href="#">Pricing</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Solutions</h5>
+      <ul>
+        <li><a href="#industries">Apparel</a></li>
+        <li><a href="#industries">Manufacturing</a></li>
+        <li><a href="#industries">F&amp;B</a></li>
+        <li><a href="#industries">Packaging</a></li>
+        <li><a href="#industries">D2C</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Connect</h5>
+      <ul>
+        <li><a href="mailto:hello@heathandkeane.com">hello@heathandkeane.com</a></li>
+        <li><a href="#">LinkedIn</a></li>
+        <li><a href="#">X / Twitter</a></li>
+        <li><a href="#">Press kit</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 HEATH &amp; KEANE — BENGALURU · DUBAI · NYC · ROTTERDAM</div>
+    <div>v0.5 · BUILT WITH CARE</div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  });
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
